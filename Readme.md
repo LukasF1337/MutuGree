@@ -1,2 +1,2 @@
 MutuGree (Mutual Agreement)
-is supposed to be a agreements platform running on zkSync.
+is a voluntary agreements platform running on zkSync.
