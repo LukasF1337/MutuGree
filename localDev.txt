@@ -1,0 +1,5 @@
+eth and zksync local node:
+$ sudo zksync-cli dev start
+
+Android/web/(iOS) dev
+$ npx expo
