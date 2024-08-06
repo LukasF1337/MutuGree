@@ -1,5 +1,12 @@
 Special Vyper compiler for zkSync needed. Use Hardhad to manage all this.
 https://docs.zksync.io/build/tooling/hardhat/hardhat-zksync-vyper
 here yarn, not npm!
+
 Compile contracts in contracts/ folder
 $ yarn hardhat compile
+
+Interact with contract
+See https://github.com/matter-labs/zksync-cli/blob/HEAD/docs/contract-interaction.md
+Example
+$ npx zksync-cli contract read --chain "in-memory-node" --from "0x36615Cf349d7F6344891B1e7CA7C72883F5dc049" --contract "0x111C3E89Ce80e62EE88318C2804920D4c96f92bb" --abi "Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json"
+
