@@ -1,0 +1,40 @@
+
+1. Make offer (including arbiter prio list, time limited), renewable, can be taken back?
+2. Accept offer (including how and by who conflics is resolved, resolver priority list, one by each party?)
+3. Accept acceptor (time limited)? Resolver accept too? 
+4. Deploy funds as insurances
+5. Mutually fulfill/deny contract or
+6. Conflict resolution trough arbiter. Power over how deployed funds are redistributed between parties.
+
+Offer types:
+A. Accept any
+B. Or only towards specific person, person list.
+C. Variant: Accept only after back acceptance
+-> After contract made, arbiter request goes out. Arbiter can accept/decline. Decide wheter or not he receives different kinds of requests (by costum tags?). If no arbiter is found, the contract is not in nullified? No, but there will be change request on the arbiter lists, or the possibility to annul.
+
+Arbiter/Resolver:
+If for a given contract there is no arbiter volitionally arbiting found, this means the contract will stop existing/be negated, if there is not continual reconfirmation by the parties interested until an arbiter is found.
+A. NO Accept any arbitration request!
+B. Accept only after back acceptance
+C. Time limited decision. Delegate capabilities? Better the customer decides on contract agreement how to delegate on non availability. Abusable? No, delegate is ok, but time limit will be inherited, so not Abusable. If time limit is crossed, auto delegate to next arbiter in customer prio list. Delegation must be accepted by the next arbiter, default is deny.
+
+After arbiter has decided:
+Options:
+A. Do nothing or only one party objects. Funds are redistributed according to arbiter decision.
+B. Both parties object to the way the arbiter decided. Choose new arbiter on by customer given priority lists. Go back to Arbiter/Resolver step.
+
+Default time limit of 2 weeks seems OK. Customizable?
+
+Principle: Always try to resolve at the most immediate distance. On conflict, mutually delegate.
+1. Contract itself. 2. Conflict -> Mutual arbiter. 3. No mutual arbiter conflict -> Arbiter delegation.
+Strength: Both contract parties > Arbiter > 1/0 Contract parties
+-> that means that at each moment both contract parties can reassign arbiter lists. But once instantiated arbiters must get some incentive, even if the were changed. The conflicting parties can always agree to either execute or dissolve the contract and circuumvent any arbiter.
+Also both parties can mutually prolong the judgement period, if need be.
+
+How do customers and arbiters communicate securely? Cant just publish private contacts on blockchains. Maybe there are sufficient tools on zkSync via Vyper.
+https://medium.com/@TamTamTamch/navigating-privacy-in-blockchain-a-closer-look-at-zksync-68fda7c40666
+
+Important usecase: contract with oneself.
+
+Other Usecase: Contract between n parties.
+

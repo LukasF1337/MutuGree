@@ -1,0 +1,5 @@
+Special Vyper compiler for zkSync needed. Use Hardhad to manage all this.
+https://docs.zksync.io/build/tooling/hardhat/hardhat-zksync-vyper
+here yarn, not npm!
+Compile contracts in contracts/ folder
+$ yarn hardhat compile
