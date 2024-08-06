@@ -55,8 +55,16 @@ const Tab1 = () => {
     const [partnerStake, onChangePartnerStake] = React.useState('');
 
     async function deployContract() {
-        const contract = await contractFactory.deploy(contractText, 10, 10);
-        return contract
+        // TODO check arguments correct
+        const parsedMyStake = Number(myStake);
+        const parsedPartnerStake = Number(partnerStake);
+        if (isNaN(parsedMyStake) || isNaN(parsedPartnerStake)) {
+            throw new Error(myStake + " or " + partnerStake + " is not a number");
+        } else {
+            const contract = await contractFactory.deploy(contractText, "",
+                parsedMyStake, parsedPartnerStake, 10, 10, 10);
+            return contract
+        }
     }
 
     async function depl() {
@@ -112,6 +120,7 @@ const Tab1 = () => {
                         borderColor: 'orange',
                         borderWidth: 3,
                     }}
+                    keyboardType="numeric"
                     onChangeText={onChangeMyStake}
                     value={myStake}
                 />
@@ -123,6 +132,7 @@ const Tab1 = () => {
                         borderColor: 'orange',
                         borderWidth: 3,
                     }}
+                    keyboardType="numeric"
                     onChangeText={onChangePartnerStake}
                     value={partnerStake}
                 />
