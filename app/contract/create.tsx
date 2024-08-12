@@ -12,6 +12,7 @@ import {
 } from "zksync-ethers";
 import crypto from "react-native-quick-crypto";
 import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json';
+import LZString from "lz-string";
 
 const styles = StyleSheet.create({
     container: {
@@ -58,10 +59,11 @@ const Tab1 = () => {
         // TODO check arguments correct
         const parsedMyStake = Number(myStake);
         const parsedPartnerStake = Number(partnerStake);
+        console.log("\"" + myStake + "\",\"" + partnerStake + "\"");
         if (isNaN(parsedMyStake) || isNaN(parsedPartnerStake)) {
             throw new Error(myStake + " or " + partnerStake + " is not a number");
         } else {
-            const contract = await contractFactory.deploy(contractText, "",
+            const contract = await contractFactory.deploy(contractText, 1000000,
                 parsedMyStake, parsedPartnerStake, 10, 10, 10);
             return contract
         }
@@ -72,12 +74,17 @@ const Tab1 = () => {
         //const network = zkProvider.getNetwork();
         //const blockNumber = zkProvider.getBlockNumber();
         //const balance = richWallet.getBalance();
+        // TODO validate all inputs, only then deploy
         const contract = deployContract();
         //console.log(`Network: ${JSON.stringify(await network)}`);
         //console.log(`Block number: ${await blockNumber}`);
         //console.log(`rich wallet Pub Adress: ${await richWalletPubAddr}`);
         //console.log(`rich wallet Balance: ${await balance}`);
         console.log("Contract deployed at address:", await (await contract).getAddress());
+        let before = LZString.compress(simpleContractJson.bytecode.toString()
+            + simpleContractJson.abi.toString() + simpleContractJson.factoryDeps.toString())
+        let after = LZString.decompress(before)
+        console.log("Comression ratio: " + (before.length / after.length * 100).toString() + " %\n");
         //console.log("\n");
     }
 
