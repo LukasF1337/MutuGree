@@ -5,17 +5,19 @@ promisee: public(address) # party that made the offer
 promisor: public(address) # party that fulfills the offer
 arbiter: public(address) # arbiter that decides in cases of disagreement
 
-# the required state change of the promisee, to be fulfilled by the promisor
-# one page: 500 words, 5 characters per word + 1 space; 500*(5+1) = 3000
+# the state change required by the promisee, to be fulfilled by the promisor
+# one page: 500 words, around 5 characters per word + 1 space; 500*(5+1) = 3000
+# on top of that its is compressed with lz-string version 1.5: https://github.com/pieroxy/lz-string 
+# to save space on chain
 promiseText: public(String[3000])
 
-# time after contract promise going live when there has been no mutual acceptance
-# of promisee and promisor on successful fulfilment at which the arbiter can start 
-# arbitration independently. Empty String means never.
-arbiterActivationTime: public(String[60])
+# point in time at which the arbiter can start 
+# arbitration independently. Empty means never.
+arbiterActivationTime: public(uint256)
 
+# bool default is false
 # if all 3 relevant parties accepted, then the promise goes live:
-acceptedPromisee: public(bool) # bool default is false
+acceptedPromisee: public(bool) 
 acceptedPromisor: public(bool)
 acceptedArbiter: public(bool)
 
@@ -36,7 +38,7 @@ payoutToArbiterWork: public(uint256)
 @payable
 def __init__(
     _promiseText: String[3000],
-    _arbiterActivationTime: String[60],
+    _arbiterActivationTimeDelta: uint256,
     _promiseeStake: uint256,
     _promisorStake: uint256,
     _payoutToPromisor: uint256,
@@ -54,9 +56,14 @@ def __init__(
     # payoutSecurity is the extra amount for potential reimbursing of grievances, although this is
     # not strictly required. Because volition is highly valued, a payoutSecurity is not enforced. In some charitable 
     # cases it can be desireable to not require extra securities.
+
+    # the actual content, promise of the contract
     self.promiseText = _promiseText
-    # TODO check for correct time format of _arbiterActivationTime
-    self.arbiterActivationTime = _arbiterActivationTime
+    assert (_arbiterActivationTimeDelta >= 0) or (_arbiterActivationTimeDelta == empty(uint256))
+    if(_arbiterActivationTimeDelta >= 0):
+        self.arbiterActivationTime = block.timestamp + _arbiterActivationTimeDelta
+    else:
+        self.arbiterActivationTime = empty(uint256)
     self.promiseeStake = _promiseeStake
     self.promisorStake = _promisorStake
     self.payoutToPromisor = _payoutToPromisor
@@ -64,40 +71,80 @@ def __init__(
     self.payoutToArbiterWork =_payoutToArbiterWork
 
 @external
-def promiseeRetract():
-    # TODO retract agreement
-    pass
-
-@external
-def promisorRetract():
-    # TODO retract agreement
-    pass
-
-@external
-def arbiterRetract():
-    # TODO retract agreement
-    pass
-
-@external
 @payable
 def promiseeAccept():
-    # assert self.arbiterAccepted == True
-    # assert msg.value == self.acceptorStake
-    # self.offerAcceptor = msg.sender
-    # self.accepted = True
+    assert self.promisee == msg.sender
+    assert self.acceptedPromisee == False
+    assert msg.value == self.promiseeStake
+    # TODO
     pass
 
 @external
 @payable
 def promisorAccept():
-    # assert self.arbiterAccepted == True
-    # assert msg.value == self.acceptorStake
-    # self.offerAcceptor = msg.sender
-    # self.accepted = True
+    # check if sender is the specified sender, or if any sender is allowed as promisor
+    assert (self.promisor == msg.sender) or (self.promisor == empty(address))
+    # check if the right amount of stake is provided
+    assert msg.value == self.promisorStake
+    # check if the Contract not already has a promisor that accepted
+    assert self.acceptedPromisor == False
+    # store promisor address in case it was empty and unspecified before
+    self.promisor = msg.sender
     pass
 
 @external
 def arbiterAccept():
-    # assert msg.sender == self.arbiter
-    # self.arbiterAccepted = True
+    assert self.acceptedArbiter == False
+    # TODO
+    pass
+
+@external
+@payable
+def promiseeChangePromise(   
+    _promiseText: String[3000],
+    _arbiterActivationTime: String[60],
+    _promiseeStake: uint256,
+    _promisorStake: uint256,
+    _payoutToPromisor: uint256,
+    _payoutToArbiterAvailability: uint256,
+    _payoutToArbiterWork: uint256,
+    ):
+    # assert contract is not live yet
+    assert not (self.acceptedPromisee and self.acceptedPromisor and self.acceptedArbiter)
+    
+    # TODO asserts for nonactive and msg.sender
+
+    # TODO payback to already payd in others
+    pass
+
+@external
+def promiseeRetract():
+    # assert contract is not live yet
+    assert not (self.acceptedPromisee and self.acceptedPromisor and self.acceptedArbiter)
+    # TODO retract agreement
+    pass
+
+@external
+def promisorRetract():
+    # assert contract is not live yet
+    assert not (self.acceptedPromisee and self.acceptedPromisor and self.acceptedArbiter)
+    # TODO retract agreement
+    pass
+
+@external
+def arbiterRetract():
+    # assert contract is not live yet
+    assert not (self.acceptedPromisee and self.acceptedPromisor and self.acceptedArbiter)
+    # TODO retract agreement
+    pass
+
+@external
+def arbiterArbitrate():
+    # assert identity of arbiter
+    assert msg.sender == self.arbiter
+    # assert promise is live
+    assert (self.acceptedPromisee and self.acceptedPromisor and self.acceptedArbiter)
+    # TODO assert conditions for arbitration are met
+
+    # TODO arbitrate
     pass
