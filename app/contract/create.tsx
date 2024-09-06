@@ -63,8 +63,10 @@ const Tab1 = () => {
         if (isNaN(parsedMyStake) || isNaN(parsedPartnerStake)) {
             throw new Error(myStake + " or " + partnerStake + " is not a number");
         } else {
-            const contract = await contractFactory.deploy(contractText, 1000000,
-                parsedMyStake, parsedPartnerStake, 10, 10, 10);
+            const contract = await contractFactory.deploy(
+                contractText, parsedMyStake,
+                await richWallet.getAddress(), parsedPartnerStake, 0,
+                await richWallet.getAddress(), 10, 0);
             return contract
         }
     }
