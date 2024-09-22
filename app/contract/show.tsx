@@ -13,10 +13,12 @@ import {
 import crypto from "react-native-quick-crypto";
 import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json';
 import LZString from "lz-string";
+import { PaperProvider } from 'react-native-paper';
+import { theme } from '../shared_libs/utils'
 
 const Tab1 = () => {
     return (
-        <>
+        <PaperProvider theme={theme}>
             <ScrollView>
                 <View>
                     <Button
@@ -26,7 +28,7 @@ const Tab1 = () => {
                 </View>
 
             </ScrollView>
-        </>);
+        </PaperProvider>);
 }
 
 export default Tab1;

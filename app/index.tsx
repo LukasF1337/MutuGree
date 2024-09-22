@@ -8,26 +8,6 @@ import { useStore } from './shared_libs/global_persistent_context';
 import { PaperProvider } from 'react-native-paper';
 import { theme } from './shared_libs/utils'
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-  },
-  baseText: {
-    //fontFamily: 'Baskerville',
-  },
-  titleText: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    backgroundColor: '#f4511e',
-    color: "white",
-    height: 63,
-    alignContent: "center"
-    //fontFamily: 'Baskerville',
-  },
-});
-
 const App = () => {
 
   const hasHydrated = useStore(state => state._hasHydrated);
@@ -43,8 +23,8 @@ const App = () => {
           Home
         </Text>
       </View> */}
-      <ScrollView style={styles.container}>
-        <Text style={styles.baseText}>Some text 1</Text>
+      <ScrollView>
+        <Text>Some text 1</Text>
         <View>
           <Text>Some more text for honor</Text>
         </View>

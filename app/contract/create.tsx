@@ -18,23 +18,6 @@ import { contractData, ContractSlice, useStore } from '../shared_libs/global_per
 import { PaperProvider } from 'react-native-paper';
 import { theme } from '../shared_libs/utils'
 
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 24,
-    },
-    baseText: {
-        //fontFamily: 'Baskerville',
-    },
-    titleText: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        //fontFamily: 'Baskerville',
-    },
-});
-
 const Tab1 = () => {
 
     const router = useRouter();
@@ -173,7 +156,7 @@ const Tab1 = () => {
 
     return (
         <PaperProvider theme={theme}>
-            <ScrollView style={styles.container}>
+            <ScrollView>
                 <View>
                     <Text>Edit your promise text:</Text>
                 </View>
