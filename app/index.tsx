@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import {
-  View, Text, Image, ScrollView,
-  TextInput, Pressable, StyleSheet, Appearance
+  View, ScrollView,
+  Pressable,
 } from 'react-native';
 import { Link, Stack, useRouter } from 'expo-router';
 import { useStore } from './shared_libs/global_persistent_context';
-import { PaperProvider } from 'react-native-paper';
+import { Button, TextInput, Text, PaperProvider } from 'react-native-paper';
 import { theme } from './shared_libs/utils'
 
 const App = () => {
@@ -18,32 +18,20 @@ const App = () => {
 
   return (
     <PaperProvider theme={theme}>
-      {/*<View>
-        <Text style={styles.titleText} >
-          Home
-        </Text>
-      </View> */}
-      <ScrollView>
+      <ScrollView
+        style={{
+          backgroundColor: theme.colors.background
+        }}
+      >
         <Text>Some text 1</Text>
-        <View>
-          <Text>Some more text for honor</Text>
-        </View>
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: 'orange',
-            borderWidth: 3,
-            width: 300,
-          }}
-          defaultValue="You can type in me"
-        />
-        <View>
-          <Link href="/contract/create" asChild>
-            <Pressable>
-              <Text>Create contract</Text>
-            </Pressable>
-          </Link>
-        </View>
+        <Text>Some more text for honor</Text>
+        <TextInput>
+        </TextInput>
+        <Link href="/contract/create" asChild>
+          <Button icon="note-edit-outline">
+            edit new contract
+          </Button>
+        </Link>
       </ScrollView>
     </PaperProvider>
   );

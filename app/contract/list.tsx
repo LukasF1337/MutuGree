@@ -2,8 +2,7 @@ import React, {
     useState, useEffect
 } from 'react';
 import {
-    View, Text, Image, ScrollView, TextInput, StyleSheet,
-    Pressable, Button, Alert, Platform
+    View, ScrollView,
 } from 'react-native';
 import { Link, Stack, useNavigation } from 'expo-router';
 import { ethers } from "ethers";

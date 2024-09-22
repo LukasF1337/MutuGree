@@ -2,8 +2,7 @@ import React, {
     useState, useEffect
 } from 'react';
 import {
-    View, Text, Image, ScrollView, TextInput, StyleSheet,
-    Pressable, Button, Alert, Platform,
+    View, ScrollView, Platform,
 } from 'react-native';
 import { Link, Stack, useRouter } from 'expo-router';
 import { ethers } from "ethers";
@@ -15,7 +14,7 @@ import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contra
 import LZString from "lz-string";
 //import { getData, storeData } from '../shared_libs/utils'
 import { contractData, ContractSlice, useStore } from '../shared_libs/global_persistent_context';
-import { PaperProvider } from 'react-native-paper';
+import { Text, TextInput, ActivityIndicator, PaperProvider, Button } from 'react-native-paper';
 import { theme } from '../shared_libs/utils'
 
 const Tab1 = () => {
@@ -156,95 +155,51 @@ const Tab1 = () => {
 
     return (
         <PaperProvider theme={theme}>
-            <ScrollView>
-                <View>
-                    <Text>Edit your promise text:</Text>
-                </View>
+            <ScrollView style={{
+                backgroundColor: theme.colors.background
+            }}>
+                <Text>Edit your promise text:</Text>
                 <TextInput
-                    style={{
-                        height: 120,
-                        margin: 12,
-                        padding: 10,
-                        borderColor: 'orange',
-                        borderWidth: 3,
-                    }}
                     onChangeText={onChangeContractText}
                     value={contractText}
                 />
-                <View>
-                    <Text>Your stake (promisee stake):</Text>
-                </View>
+                <Text>Your stake (promisee stake):</Text>
                 <TextInput
-                    style={{
-                        height: 40,
-                        margin: 12,
-                        padding: 10,
-                        borderColor: 'orange',
-                        borderWidth: 3,
-                    }}
                     inputMode="decimal"
                     onChangeText={onChangePromiseeStake}
                     onEndEditing={checkNumber}
                     value={promiseeStake}
                 />
-                <View>
-                    <Text>The other, contract fullfilling,
-                        parties stake (promisor stake):</Text>
-                </View>
+                <Text>The other, contract fullfilling,
+                    parties stake (promisor stake):</Text>
                 <TextInput
-                    style={{
-                        height: 40,
-                        margin: 12,
-                        padding: 10,
-                        borderColor: 'orange',
-                        borderWidth: 3,
-                    }}
                     inputMode="decimal"
                     onChangeText={onChangePromisorStake}
                     onEndEditing={checkNumber}
                     value={promisorStake}
                 />
-                <View>
-                    <Text>The other, contract fullfilling,
-                        parties payout (promisor payout):</Text>
-                </View>
+                <Text>The other, contract fullfilling,
+                    parties payout (promisor payout):</Text>
                 <TextInput
-                    style={{
-                        height: 40,
-                        margin: 12,
-                        padding: 10,
-                        borderColor: 'orange',
-                        borderWidth: 3,
-                    }}
                     inputMode="decimal"
                     onChangeText={onChangePromisorPayout}
                     onEndEditing={checkNumber}
                     value={promisorPayout}
                 />
-                <View>
-                    <Text>The maximum arbiter payout (arbiter max payout):</Text>
-                </View>
+                <Text>The maximum arbiter payout (arbiter max payout):</Text>
                 <TextInput
-                    style={{
-                        height: 40,
-                        margin: 12,
-                        padding: 10,
-                        borderColor: 'orange',
-                        borderWidth: 3,
-                    }}
                     inputMode="decimal"
                     onChangeText={onChangeArbiterPayout}
                     onEndEditing={checkNumber}
                     value={arbiterPayout}
                 />
-                <View>
-                    <Button
-                        title="Deploy Contract"
-                        onPress={handlePress}
-                        color='lightblue'
-
-                    />
-                    {/*<Link href={{
+                <Button
+                    icon="note-check-outline"
+                    onPress={handlePress}
+                >
+                    deploy contract
+                </Button>
+                {/*<Link href={{
                         pathname: "/contract/show",
                         //params: { address: await depl() }
                     }} replace asChild>
@@ -253,7 +208,10 @@ const Tab1 = () => {
 
                         </Pressable>
                     </Link>*/}
-                </View>
+                <ActivityIndicator
+                    animating={true}
+                    hidesWhenStopped={true}
+                />
             </ScrollView >
         </PaperProvider>
     );

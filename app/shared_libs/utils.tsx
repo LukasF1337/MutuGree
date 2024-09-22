@@ -1,4 +1,4 @@
-import { DefaultTheme, PaperProvider } from 'react-native-paper';
+import { MD3DarkTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 
 const colorsLight = {
     "colors": {
