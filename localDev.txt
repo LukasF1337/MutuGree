@@ -3,3 +3,9 @@ $ sudo zksync-cli dev start
 
 Android/web/(iOS) dev
 $ npx expo
+
+Fix local dev:
+1. delete node_modules/
+2. ??? allowed? $ npm update
+3. $ npx expo --reset-cache
+4. $ npx expo run:android
