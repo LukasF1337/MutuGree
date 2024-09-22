@@ -21,11 +21,12 @@ promisor: public(address) # party that fulfills the offer
 arbiter: public(address) # arbiter that decides in cases of disagreement
 
 # the state change required by the promisee, to be fulfilled by the promisor
-# one page: 500 words, around 5 characters per word + 1 space; 500*(5+1) = 3000
+# 10 pages, one page: 500 words, around 5 characters per word + 1 space; 10*500*(5+1) = 30000
 # on top of that its is compressed with lz-string version 1.5: https://github.com/pieroxy/lz-string 
 # to save space on chain. TODO FUTURE: first parts of string optionally specify the encryption of the 
 # subsequent text.
-promiseText: public(String[3000])
+PROMISE_TEXT_SIZE: constant(uint256) = 30000
+promiseText: public(String[PROMISE_TEXT_SIZE])
 
 # point in time (block.timestamp) after which the arbiter can start 
 # arbitration independently.
@@ -105,7 +106,7 @@ def _resetAll():
 @internal
 def _setAll(
     #_promisee = msg.sender
-    _promiseText: String[3000],
+    _promiseText: String[PROMISE_TEXT_SIZE],
     _promiseeStake: uint256,
     
     _promisor: address, # empty means unspecified
@@ -147,7 +148,7 @@ def _setAll(
 @payable
 def __init__(
     #_promisee = msg.sender
-    _promiseText: String[3000],
+    _promiseText: String[PROMISE_TEXT_SIZE],
     _promiseeStake: uint256,
     
     _promisor: address, # empty means unspecified
@@ -234,7 +235,7 @@ def arbiterAccept():
 @payable
 def promiseeChangePromise(   
     #_promisee = msg.sender; already the case
-    _promiseText: String[3000],
+    _promiseText: String[PROMISE_TEXT_SIZE],
     _promiseeStake: uint256,
     
     _promisor: address, # empty means unspecified
@@ -345,8 +346,8 @@ def considerFulfilled():
         self.arbiterAccepts = False
         self.promiseeConsidersFulfilled = False
         self.promisorConsidersFulfilled = False
-        send(self.promisor, self.promisorStake + self.payoutToPromisor)
-        send(self.promisee, self.promiseeStake - self.payoutToPromisor)
+        send(self.promisor, self.promisorStake + self.payoutToPromisor) # FIXME
+        send(self.promisee, self.promiseeStake - self.payoutToPromisor) # FIXME
     pass
 
 # allows for changing the arbiter if both promisee and
