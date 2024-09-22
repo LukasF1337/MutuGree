@@ -3,7 +3,10 @@ import {
   View, Text, Image, ScrollView,
   TextInput, Pressable, StyleSheet, Appearance
 } from 'react-native';
-import { Link, Stack, useNavigation } from 'expo-router';
+import { Link, Stack, useRouter } from 'expo-router';
+import { useStore } from './shared_libs/global_persistent_context';
+import { PaperProvider } from 'react-native-paper';
+import { theme } from './shared_libs/utils'
 
 const styles = StyleSheet.create({
   container: {
@@ -26,13 +29,15 @@ const styles = StyleSheet.create({
 });
 
 const App = () => {
-  const navigation = useNavigation();
-  useEffect(() => {
-    navigation.setOptions({ headerShown: true });
-  }, [navigation]);
+
+  const hasHydrated = useStore(state => state._hasHydrated);
+
+  if (!hasHydrated) {
+    return <Text>Loading from Persistent Storage...</Text>
+  }
 
   return (
-    <>
+    <PaperProvider theme={theme}>
       {/*<View>
         <Text style={styles.titleText} >
           Home
@@ -60,7 +65,7 @@ const App = () => {
           </Link>
         </View>
       </ScrollView>
-    </>
+    </PaperProvider>
   );
 };
 
