@@ -3,6 +3,12 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
+export interface ProviderSlice {
+    providerString: string | null;
+    setProviderString: (providerString: string) => void;
+    deleteProviderString: () => void;
+}
+
 export type contractData = {
     contractAddress: string,
     contractText: string,
@@ -14,10 +20,10 @@ export type contractData = {
 
 // Define your store's state type
 export interface ContractSlice {
-    value: contractData | null; // The state could be null initially
-    setValue: (value: contractData) => void;
+    contractData: contractData | null; // The state could be null initially
+    setContractData: (value: contractData) => void;
     // loadValue() not needed, just read value above
-    deleteValue: () => void;
+    deleteContractData: () => void;
 }
 
 export interface HydratedSlice {
@@ -25,20 +31,35 @@ export interface HydratedSlice {
     hydrate: () => void;
 }
 
-type StoreType = ContractSlice & HydratedSlice;
+type StoreType = ProviderSlice & ContractSlice & HydratedSlice;
+
+const createProviderSlice: StateCreator<
+    StoreType,
+    [["zustand/persist", unknown]],
+    [],
+    ProviderSlice
+> = (set, get) => ({
+    providerString: null, // initial is null
+    setProviderString: async (providerString: string) => {
+        set(() => ({ providerString: providerString }));
+    },
+    deleteProviderString: async () => {
+        set(() => ({ providerString: null }));
+    },
+})
 
 const createContractSlice: StateCreator<
     StoreType,
     [["zustand/persist", unknown]],
     [],
     ContractSlice
-> = (set) => ({
-    value: null, // initial is null
-    setValue: async (value: contractData) => {
-        set(() => ({ value: value }));
+> = (set, get) => ({
+    contractData: null, // initial is null
+    setContractData: async (value: contractData) => {
+        set(() => ({ contractData: value }));
     },
-    deleteValue: async () => {
-        set(() => ({ value: null }));
+    deleteContractData: async () => {
+        set(() => ({ contractData: null }));
     },
 })
 
@@ -59,6 +80,7 @@ const createHydratedSlice: StateCreator<
 export const useStore = create<StoreType>()(
     persist(
         (...a) => ({ // what is this weird "...a" synctax? Just pass on every parameter?
+            ...createProviderSlice(...a),
             ...createContractSlice(...a),
             ...createHydratedSlice(...a),
         }),

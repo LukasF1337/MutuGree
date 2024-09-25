@@ -13,7 +13,7 @@ import crypto from "react-native-quick-crypto";
 import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json';
 import LZString from "lz-string";
 //import { getData, storeData } from '../shared_libs/utils'
-import { contractData, ContractSlice, useStore } from '../shared_libs/global_persistent_context';
+import { contractData, useStore } from '../shared_libs/global_persistent_context';
 import { Text, TextInput, ActivityIndicator, PaperProvider, Button } from 'react-native-paper';
 import { theme } from '../shared_libs/utils'
 
@@ -21,15 +21,32 @@ const Tab1 = () => {
 
     const router = useRouter();
 
-    const [contractText, onChangeContractText] = React.useState('Contract Text');
-    const [promiseeStake, onChangePromiseeStake] = React.useState('0');
-    const [promisorStake, onChangePromisorStake] = React.useState('0');
-    const [promisorPayout, onChangePromisorPayout] = React.useState('0');
-    const [arbiterPayout, onChangeArbiterPayout] = React.useState('0');
+    const contractStore = useStore(state => state.contractData)
+    const setContractStore = useStore(state => state.setContractData)
+    const contractStored = contractStore ?? { // default values
+        contractAddress: "",
+        contractText: "Text of your promise here",
+        promiseeStake: 0,
+        promisorStake: 0,
+        promisorPayout: 0,
+        arbiterPayout: 0,
+    }
+    const providerStore = useStore(state => state.providerString)
+    const setProviderStore = useStore(state => state.setProviderString)
+
+    const [contractText, onChangeContractText] =
+        React.useState(contractStored.contractText.toString());
+    const [promiseeStake, onChangePromiseeStake] =
+        React.useState(contractStored.promiseeStake.toString());
+    const [promisorStake, onChangePromisorStake] =
+        React.useState(contractStored.promisorStake.toString());
+    const [promisorPayout, onChangePromisorPayout] =
+        React.useState(contractStored.promisorPayout.toString());
+    const [arbiterPayout, onChangeArbiterPayout] =
+        React.useState(contractStored.arbiterPayout.toString());
 
     async function getProvider(): Promise<Provider> {
-        const response = null //await getData("provider")
-        if (response == undefined || response == null) {
+        if (providerStore == undefined || providerStore == null) {
             var providerStr: string;
             if (Platform.OS === 'android') {
                 // 10.0.2.2 is alias for localhost of machine hosting the android VM
@@ -42,11 +59,14 @@ const Tab1 = () => {
                 throw new Error(`${Platform.OS} not supported.`);
             }
             //storeData("provider", providerStr)
+            setProviderStore(providerStr)
             console.log("created Provider: " + providerStr)
             return new Provider(providerStr)
+            // TODO FIXME what happens if loaded again, is variable
+            // providerStore properly updated?
         } else {
-            console.log("loaded Provider: " + response)
-            return new Provider(response)
+            console.log("loaded Provider: " + providerStore)
+            return new Provider(providerStore)
         }
     }
 
@@ -71,6 +91,15 @@ const Tab1 = () => {
                 contractText, parsedPromiseeStake,
                 await richWallet.getAddress(), parsedPromisorStake, parsedPromisorPayout,
                 await richWallet.getAddress(), 10, parsedArbiterPayout);
+            const contractAdress = await contract.getAddress();
+            setContractStore({
+                contractAddress: contractAdress,
+                contractText: contractText,
+                promiseeStake: parsedPromiseeStake,
+                promisorStake: parsedPromisorStake,
+                promisorPayout: parsedPromisorPayout,
+                arbiterPayout: parsedArbiterPayout,
+            })
             return contract;
         }
     }
@@ -151,55 +180,54 @@ const Tab1 = () => {
 
     if (!hasHydrated) {
         return <Text>Loading from Persistent Storage...</Text>
-    }
-
-    return (
-        <PaperProvider theme={theme}>
-            <ScrollView style={{
-                backgroundColor: theme.colors.background
-            }}>
-                <Text>Edit your promise text:</Text>
-                <TextInput
-                    onChangeText={onChangeContractText}
-                    value={contractText}
-                />
-                <Text>Your stake (promisee stake):</Text>
-                <TextInput
-                    inputMode="decimal"
-                    onChangeText={onChangePromiseeStake}
-                    onEndEditing={checkNumber}
-                    value={promiseeStake}
-                />
-                <Text>The other, contract fullfilling,
-                    parties stake (promisor stake):</Text>
-                <TextInput
-                    inputMode="decimal"
-                    onChangeText={onChangePromisorStake}
-                    onEndEditing={checkNumber}
-                    value={promisorStake}
-                />
-                <Text>The other, contract fullfilling,
-                    parties payout (promisor payout):</Text>
-                <TextInput
-                    inputMode="decimal"
-                    onChangeText={onChangePromisorPayout}
-                    onEndEditing={checkNumber}
-                    value={promisorPayout}
-                />
-                <Text>The maximum arbiter payout (arbiter max payout):</Text>
-                <TextInput
-                    inputMode="decimal"
-                    onChangeText={onChangeArbiterPayout}
-                    onEndEditing={checkNumber}
-                    value={arbiterPayout}
-                />
-                <Button
-                    icon="note-check-outline"
-                    onPress={handlePress}
-                >
-                    deploy contract
-                </Button>
-                {/*<Link href={{
+    } else {
+        return (
+            <PaperProvider theme={theme}>
+                <ScrollView style={{
+                    backgroundColor: theme.colors.background
+                }}>
+                    <Text>Edit your promise text:</Text>
+                    <TextInput
+                        onChangeText={onChangeContractText}
+                        value={contractText}
+                    />
+                    <Text>Your stake (promisee stake):</Text>
+                    <TextInput
+                        inputMode="decimal"
+                        onChangeText={onChangePromiseeStake}
+                        onEndEditing={checkNumber}
+                        value={promiseeStake}
+                    />
+                    <Text>The other, contract fullfilling,
+                        parties stake (promisor stake):</Text>
+                    <TextInput
+                        inputMode="decimal"
+                        onChangeText={onChangePromisorStake}
+                        onEndEditing={checkNumber}
+                        value={promisorStake}
+                    />
+                    <Text>The other, contract fullfilling,
+                        parties payout (promisor payout):</Text>
+                    <TextInput
+                        inputMode="decimal"
+                        onChangeText={onChangePromisorPayout}
+                        onEndEditing={checkNumber}
+                        value={promisorPayout}
+                    />
+                    <Text>The maximum arbiter payout (arbiter max payout):</Text>
+                    <TextInput
+                        inputMode="decimal"
+                        onChangeText={onChangeArbiterPayout}
+                        onEndEditing={checkNumber}
+                        value={arbiterPayout}
+                    />
+                    <Button
+                        icon="note-check-outline"
+                        onPress={handlePress}
+                    >
+                        deploy contract
+                    </Button>
+                    {/*<Link href={{
                         pathname: "/contract/show",
                         //params: { address: await depl() }
                     }} replace asChild>
@@ -208,13 +236,14 @@ const Tab1 = () => {
 
                         </Pressable>
                     </Link>*/}
-                <ActivityIndicator
-                    animating={true}
-                    hidesWhenStopped={true}
-                />
-            </ScrollView >
-        </PaperProvider>
-    );
+                    <ActivityIndicator
+                        animating={true}
+                        hidesWhenStopped={true}
+                    />
+                </ScrollView >
+            </PaperProvider>
+        );
+    }
 };
 
 export default Tab1
