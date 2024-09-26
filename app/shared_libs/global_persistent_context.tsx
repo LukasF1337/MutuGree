@@ -3,10 +3,12 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
+
+
 export interface ProviderSlice {
     providerString: string | null;
-    setProviderString: (providerString: string) => void;
-    deleteProviderString: () => void;
+    providerStringSet: (providerString: string) => void;
+    providerStringDelete: () => void;
 }
 
 export type contractData = {
@@ -21,9 +23,16 @@ export type contractData = {
 // Define your store's state type
 export interface ContractSlice {
     contractData: contractData | null; // The state could be null initially
-    setContractData: (value: contractData) => void;
+    contractDataSet: (value: contractData) => void;
     // loadValue() not needed, just read value above
-    deleteContractData: () => void;
+    contractDataDelete: () => void;
+}
+
+export interface ContractListSlice {
+    contractList: Map<string, contractData> | null;
+    contractListAdd: (key: string, value: contractData) => void;
+    contractListRemove: (key: string) => void;
+    contractListReset: () => void;
 }
 
 export interface HydratedSlice {
@@ -31,7 +40,7 @@ export interface HydratedSlice {
     hydrate: () => void;
 }
 
-type StoreType = ProviderSlice & ContractSlice & HydratedSlice;
+type StoreType = ProviderSlice & ContractSlice & ContractListSlice & HydratedSlice;
 
 const createProviderSlice: StateCreator<
     StoreType,
@@ -40,10 +49,10 @@ const createProviderSlice: StateCreator<
     ProviderSlice
 > = (set, get) => ({
     providerString: null, // initial is null
-    setProviderString: async (providerString: string) => {
+    providerStringSet: async (providerString: string) => {
         set(() => ({ providerString: providerString }));
     },
-    deleteProviderString: async () => {
+    providerStringDelete: async () => {
         set(() => ({ providerString: null }));
     },
 })
@@ -55,11 +64,38 @@ const createContractSlice: StateCreator<
     ContractSlice
 > = (set, get) => ({
     contractData: null, // initial is null
-    setContractData: async (value: contractData) => {
+    contractDataSet: async (value: contractData) => {
         set(() => ({ contractData: value }));
     },
-    deleteContractData: async () => {
+    contractDataDelete: async () => {
         set(() => ({ contractData: null }));
+    },
+})
+
+const createContractListSlice: StateCreator<
+    StoreType,
+    [["zustand/persist", unknown]],
+    [],
+    ContractListSlice
+> = (set, get) => ({
+    contractList: null,
+    contractListAdd: async (key: string, value: contractData) => {
+        console.log("Key: " + key + " value: " + JSON.stringify(value))
+        set((state) => ({
+            contractList: (state.contractList ?? new Map<string, contractData>()).set(key, value)
+        }));
+    },
+    contractListRemove: async (key: string) => {
+        const deleteValueOfKey = (val: Map<string, contractData>) => {
+            val.delete(key)
+            return val;
+        }
+        set((state) => ({
+            contractList: deleteValueOfKey(state.contractList ?? new Map<string, contractData>())
+        }));
+    },
+    contractListReset: async () => {
+        set(() => ({ contractList: new Map<string, contractData>() }))
     },
 })
 
@@ -74,14 +110,15 @@ const createHydratedSlice: StateCreator<
         set({
             _hasHydrated: true
         });
-    }
+    },
 })
 
 export const useStore = create<StoreType>()(
-    persist(
-        (...a) => ({ // what is this weird "...a" synctax? Just pass on every parameter?
+    persist<StoreType>(
+        (...a) => ({ // ""...a" means: just pass on every parameter
             ...createProviderSlice(...a),
             ...createContractSlice(...a),
+            ...createContractListSlice(...a),
             ...createHydratedSlice(...a),
         }),
         {
@@ -92,7 +129,30 @@ export const useStore = create<StoreType>()(
                 // It should but it doesnt. This is a workaround.
                 // There's got to be something Im missing here.
                 return Platform.OS === 'web' ? localStorage : AsyncStorage;
+            }, {
+                // transform values for JSON conversion
+                // used on JSON.stringify()
+                replacer: (key: any, value: any) => {
+                    if (value instanceof Map) { // map to array
+                        return {
+                            dataType: 'Map',
+                            value: Array.from(value.entries()),
+                        };
+                    } else {
+                        return value;
+                    }
+                },
+                // used on JSON.parse()
+                reviver: (key: any, value: any) => {
+                    if (typeof value === 'object' && value !== null) {
+                        if (value.dataType === 'Map') { // array to map
+                            return new Map(value.value);
+                        }
+                    }
+                    return value;
+                }
             }),
+
             // if version changes, discards all stored data
             // optionally migrate() instead:
             version: 0,

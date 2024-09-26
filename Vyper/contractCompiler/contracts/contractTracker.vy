@@ -4,7 +4,7 @@ event newEntry:
   owner: indexed(address)
   contract: address
 
-MAX_CONTRACTS_TRACKED: constant(uint256) = 100
+MAX_CONTRACTS_TRACKED: constant(uint256) = 1000
 contracts: public(HashMap[address, DynArray[address, MAX_CONTRACTS_TRACKED]])
 
 @external
@@ -24,5 +24,8 @@ def removeEntry(
             dynArr[i] = dynArr[len(dynArr)-1]
             dynArr.pop()
             break
-        
 
+@external
+@view
+def getEntries() -> DynArray[address, MAX_CONTRACTS_TRACKED]:
+    return self.contracts[msg.sender]

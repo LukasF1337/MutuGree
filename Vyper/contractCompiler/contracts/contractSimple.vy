@@ -357,3 +357,9 @@ def considerFulfilled():
 def changeArbiter():
     #TODO
     pass
+
+@external
+@view
+def getState():
+    #TODO return entire contract state
+    pass

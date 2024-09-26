@@ -12,8 +12,26 @@ import {
 import crypto from "react-native-quick-crypto";
 import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json';
 import LZString from "lz-string";
+import { contractData, useStore } from "../shared_libs/global_persistent_context"
+
+
 
 const Tab1 = () => {
+    const contractList = useStore(state => state.contractList)
+    const contractListAdd = useStore(state => state.contractListAdd)
+    const contractListRemove = useStore(state => state.contractListRemove)
+    const contractListReset = useStore(state => state.contractListReset)
+
+    const addToList = (contractData: contractData) => {
+        contractListAdd(contractData.contractAddress, contractData)
+    }
+    const removeFromList = (contractData: contractData) => {
+        contractListRemove(contractData.contractAddress)
+    }
+    const resetList = () => {
+        contractListReset()
+    }
+
     return "";
 }
 

@@ -9,3 +9,11 @@ Fix local dev:
 2. ??? allowed? $ npm update
 3. $ npx expo --reset-cache
 4. $ npx expo run:android
+
+Debug:
+Linting the project
+$ npx expo lint
+Diagnose expo issues
+$ npx expo-doctor
+Fix expo dependencies and versions
+$ npx expo install --check

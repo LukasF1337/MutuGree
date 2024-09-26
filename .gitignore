@@ -21,3 +21,6 @@ expo-env.d.ts
 
 #ignore vscode temporary files
 .vscode/
+
+android/
+ios/

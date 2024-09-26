@@ -19,6 +19,9 @@ import { contractData, useStore } from '../shared_libs/global_persistent_context
 const Tab1 = () => {
     const router = useRouter();
     const hasHydrated = useStore(state => state._hasHydrated);
+    const contractStore = useStore(state => state.contractData) ?? "Error: no contract to show" // default ""
+    const elem = document.getElementById("contractElementHTML");
+
     if (!hasHydrated) {
         return <Text>Loading from Persistent Storage...</Text>
     } else {
@@ -27,6 +30,9 @@ const Tab1 = () => {
                 <ScrollView style={{
                     backgroundColor: theme.colors.background
                 }}>
+                    <Text id="contractElementHTML">
+                        {JSON.stringify(contractStore, null, "\t")}
+                    </Text>
                     <Button icon="archive-check-outline">
                         123
                     </Button>

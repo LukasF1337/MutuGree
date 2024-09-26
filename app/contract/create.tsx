@@ -12,7 +12,6 @@ import {
 import crypto from "react-native-quick-crypto";
 import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json';
 import LZString from "lz-string";
-//import { getData, storeData } from '../shared_libs/utils'
 import { contractData, useStore } from '../shared_libs/global_persistent_context';
 import { Text, TextInput, ActivityIndicator, PaperProvider, Button } from 'react-native-paper';
 import { theme } from '../shared_libs/utils'
@@ -22,7 +21,8 @@ const Tab1 = () => {
     const router = useRouter();
 
     const contractStore = useStore(state => state.contractData)
-    const setContractStore = useStore(state => state.setContractData)
+
+    const setContractStore = useStore(state => state.contractDataSet)
     const contractStored = contractStore ?? { // default values
         contractAddress: "",
         contractText: "Text of your promise here",
@@ -32,7 +32,10 @@ const Tab1 = () => {
         arbiterPayout: 0,
     }
     const providerStore = useStore(state => state.providerString)
-    const setProviderStore = useStore(state => state.setProviderString)
+    const setProviderStore = useStore(state => state.providerStringSet)
+
+    const contractList = useStore(state => state.contractList)
+    const contractListAdd = useStore(state => state.contractListAdd)
 
     const [contractText, onChangeContractText] =
         React.useState(contractStored.contractText.toString());
@@ -92,14 +95,16 @@ const Tab1 = () => {
                 await richWallet.getAddress(), parsedPromisorStake, parsedPromisorPayout,
                 await richWallet.getAddress(), 10, parsedArbiterPayout);
             const contractAdress = await contract.getAddress();
-            setContractStore({
+            const contractDataTmp: contractData = {
                 contractAddress: contractAdress,
                 contractText: contractText,
                 promiseeStake: parsedPromiseeStake,
                 promisorStake: parsedPromisorStake,
                 promisorPayout: parsedPromisorPayout,
                 arbiterPayout: parsedArbiterPayout,
-            })
+            }
+            setContractStore(contractDataTmp)
+            contractListAdd(contractDataTmp.contractAddress, contractDataTmp)
             return contract;
         }
     }
@@ -122,7 +127,6 @@ const Tab1 = () => {
         }
 
         const functionPromiseeChangePromise = contract.getFunction("promiseeChangePromise")
-        console.log(functionPromiseeChangePromise);
         functionPromiseeChangePromise(contractText, parsedPromiseeStake,
             await richWallet.getAddress(), parsedPromisorStake, parsedPromisorPayout,
             await richWallet.getAddress(), 10, parsedArbiterPayout);
