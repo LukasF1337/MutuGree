@@ -29,7 +29,7 @@ export interface ContractSlice {
 }
 
 export interface ContractListSlice {
-    contractList: Map<string, contractData> | null;
+    contractList: Map<string, contractData>;
     contractListAdd: (key: string, value: contractData) => void;
     contractListRemove: (key: string) => void;
     contractListReset: () => void;
@@ -78,7 +78,7 @@ const createContractListSlice: StateCreator<
     [],
     ContractListSlice
 > = (set, get) => ({
-    contractList: null,
+    contractList: new Map<string, contractData>(),
     contractListAdd: async (key: string, value: contractData) => {
         console.log("Key: " + key + " value: " + JSON.stringify(value))
         set((state) => ({

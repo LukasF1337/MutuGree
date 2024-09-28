@@ -23,13 +23,15 @@ const App = () => {
           backgroundColor: theme.colors.background
         }}
       >
-        <Text>Some text 1</Text>
-        <Text>Some more text for honor</Text>
-        <TextInput>
-        </TextInput>
+        <Text>Index Page</Text>
         <Link href="/contract/create" asChild>
           <Button icon="note-edit-outline">
             edit new contract
+          </Button>
+        </Link>
+        <Link href="/contract/list" asChild>
+          <Button icon="clipboard-list-outline">
+            show contract list
           </Button>
         </Link>
       </ScrollView>

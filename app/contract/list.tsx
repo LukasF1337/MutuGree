@@ -12,7 +12,9 @@ import {
 //import crypto from "react-native-quick-crypto";
 import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json';
 import LZString from "lz-string";
+import { theme } from '../shared_libs/utils'
 import { contractData, useStore } from "../shared_libs/global_persistent_context"
+import { List, Text, PaperProvider } from 'react-native-paper';
 
 
 
@@ -31,8 +33,21 @@ const Tab1 = () => {
     const resetList = () => {
         contractListReset()
     }
+    const arrayDataItemss = Array.from(contractList.values())
+    const arrayDataItems = arrayDataItemss.map((contractItem) =>
+        <Text key={contractItem.contractAddress}>
+            {JSON.stringify(contractItem, null, "\t")}
+        </Text>);
 
-    return "";
+    return (
+        <PaperProvider theme={theme}>
+            <ScrollView style={{
+                backgroundColor: theme.colors.background
+            }}>
+                {arrayDataItems}
+            </ScrollView>
+        </PaperProvider >
+    );
 }
 
 export default Tab1;

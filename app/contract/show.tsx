@@ -32,9 +32,11 @@ const Tab1 = () => {
                     <Text id="contractElementHTML">
                         {JSON.stringify(contractStore, null, "\t")}
                     </Text>
-                    <Button icon="archive-check-outline">
-                        123
-                    </Button>
+                    <Link href="/contract/list" asChild>
+                        <Button icon="clipboard-list-outline">
+                            show contract list
+                        </Button>
+                    </Link>
                 </ScrollView>
             </PaperProvider>
         );
