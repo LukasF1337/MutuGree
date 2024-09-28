@@ -9,7 +9,7 @@ import { ethers } from "ethers";
 import {
     ContractFactory, Provider, Wallet, types, utils
 } from "zksync-ethers";
-import crypto from "react-native-quick-crypto";
+//import crypto from "react-native-quick-crypto";
 import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json';
 import LZString from "lz-string";
 import { Text, Button, PaperProvider } from 'react-native-paper';
@@ -20,7 +20,6 @@ const Tab1 = () => {
     const router = useRouter();
     const hasHydrated = useStore(state => state._hasHydrated);
     const contractStore = useStore(state => state.contractData) ?? "Error: no contract to show" // default ""
-    const elem = document.getElementById("contractElementHTML");
 
     if (!hasHydrated) {
         return <Text>Loading from Persistent Storage...</Text>

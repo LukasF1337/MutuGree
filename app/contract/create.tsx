@@ -9,7 +9,7 @@ import { ethers } from "ethers";
 import {
     ContractFactory, Provider, Wallet, types, utils
 } from "zksync-ethers";
-import crypto from "react-native-quick-crypto";
+//import crypto from "react-native-quick-crypto";
 import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json';
 import LZString from "lz-string";
 import { contractData, useStore } from '../shared_libs/global_persistent_context';
