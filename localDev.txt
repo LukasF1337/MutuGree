@@ -6,9 +6,11 @@ $ npx expo
 
 Fix local dev:
 1. delete node_modules/
-2. ??? allowed? $ npm update
-3. $ npx expo --reset-cache
-4. $ npx expo run:android
+2. delete .expo/
+3. $ npm update
+4. $ npx expo install --check
+4. $ npx expo --reset-cache
+5. $ npx expo run:android
 
 Debug:
 Linting the project
