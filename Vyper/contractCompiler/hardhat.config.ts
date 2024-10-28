@@ -7,7 +7,7 @@ import "@matterlabs/hardhat-zksync-node";
 import "@matterlabs/hardhat-zksync-deploy";
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "zkSyncSepoliaTestnet",
+  defaultNetwork: "inMemoryNode",
   networks: {
     zkSyncSepoliaTestnet: {
       url: "https://sepolia.era.zksync.dev",
@@ -55,7 +55,7 @@ const config: HardhatUserConfig = {
   },
   // Currently, only Vyper 0.3.3 or 0.3.9 are supported.
   vyper: {
-    version: "0.3.3",
+    version: "0.3.9",
   },
 };
 
