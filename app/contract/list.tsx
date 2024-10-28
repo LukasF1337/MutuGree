@@ -10,8 +10,6 @@ import {
     ContractFactory, Provider, Wallet, types, utils
 } from "zksync-ethers";
 //import crypto from "react-native-quick-crypto";
-import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json';
-import LZString from "lz-string";
 import { theme } from '../shared_libs/utils'
 import { contractData, useStore } from "../shared_libs/global_persistent_context"
 import { List, Text, PaperProvider } from 'react-native-paper';
@@ -38,16 +36,27 @@ const Tab1 = () => {
         <Text key={contractItem.contractAddress}>
             {JSON.stringify(contractItem, null, "\t")}
         </Text>);
+    const hasHydrated = useStore(state => state._hasHydrated);
+    if (!hasHydrated) {
+        return <Text>Loading from Persistent Storage...</Text>
+    } else {
+        return (
+            <PaperProvider theme={theme}>
+                <Text style={{
+                    backgroundColor: theme.colors.background
+                }}>
+                    This list contains all contracts tracked on the contractTracker on zksync.
+                    If you made changes in another app, you need to refresh it.
+                </Text>
+                <ScrollView style={{
+                    backgroundColor: theme.colors.background
+                }}>
 
-    return (
-        <PaperProvider theme={theme}>
-            <ScrollView style={{
-                backgroundColor: theme.colors.background
-            }}>
-                {arrayDataItems}
-            </ScrollView>
-        </PaperProvider >
-    );
+                    {arrayDataItems}
+                </ScrollView>
+            </PaperProvider >
+        );
+    }
 }
 
 export default Tab1;
