@@ -2,7 +2,7 @@ import React, {
     useState, useEffect
 } from 'react';
 import {
-    View, ScrollView, Platform,
+    View, ScrollView, Platform, StyleSheet,
 } from 'react-native';
 import { Link, Stack, useRouter } from 'expo-router';
 import { ethers } from "ethers";
@@ -10,13 +10,15 @@ import {
     ContractFactory, Provider, Wallet, types, utils
 } from "zksync-ethers";
 //import crypto from "react-native-quick-crypto";
-import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json';
+import smartContractsJson from '../../Vyper/manualContractCompiler/contracts-compiled/combined.json';
 import LZString from "lz-string";
 import { contractData, useStore } from '../shared_libs/global_persistent_context';
-import { Text, TextInput, ActivityIndicator, PaperProvider, Button } from 'react-native-paper';
+import { Surface, Text, HelperText, TextInput, ActivityIndicator, PaperProvider, Button } from 'react-native-paper';
 import { theme } from '../shared_libs/utils'
 
 const Tab1 = () => {
+
+    const contractJson = smartContractsJson['contracts/contractSimple.vy']
 
     const router = useRouter();
 
@@ -47,6 +49,13 @@ const Tab1 = () => {
         React.useState(contractStored.promisorPayout.toString());
     const [arbiterPayout, onChangeArbiterPayout] =
         React.useState(contractStored.arbiterPayout.toString());
+
+    const isIntegerNumber = (value: string): boolean => {
+        if (value.trim().length == 0 || isNaN(+value)) {
+            return false
+        }
+        return +value == Math.floor(+value)
+    };
 
     async function getProvider(): Promise<Provider> {
         if (providerStore == undefined || providerStore == null) {
@@ -141,7 +150,7 @@ const Tab1 = () => {
         const richWallet = new Wallet(
             "0x7726827caac94a7f9e1b160f7ea819f172f7b6f9d2a97f992c38edeab82d4110", await getProvider());
         const contractFactory = new ContractFactory(
-            simpleContractJson.abi, simpleContractJson.bytecode, richWallet);
+            contractJson.abi, contractJson.bytecode, richWallet);
         //const richWalletPubAddr = richWallet.getAddress();
         //const network = zkProvider.getNetwork();
         //const blockNumber = zkProvider.getBlockNumber();
@@ -155,8 +164,8 @@ const Tab1 = () => {
         //console.log(`rich wallet Balance: ${await balance}`);
         console.log("Contract deployed at address:", await (await contract).getAddress());
         interactWithContract(richWallet, contractFactory, await contract)
-        let compressedStr = LZString.compress(simpleContractJson.bytecode.toString()
-            + simpleContractJson.abi.toString() + simpleContractJson.factoryDeps.toString())
+        let compressedStr = LZString.compress(contractJson.bytecode.toString()
+            + contractJson.abi.toString())
         let uncompressedStr = LZString.decompress(compressedStr)
         console.log("Comression ratio: " +
             (compressedStr.length / uncompressedStr.length * 100).toString() + " %\n");
@@ -175,10 +184,20 @@ const Tab1 = () => {
         }
     };
 
-    async function checkNumber() {
+    async function checkNumbers() {
         // TODO check if all fields are integer numbers
         // TODO check if numbers are allowed (stake1+stake2 >= arbiterpay)
     }
+
+    const surfaceStyle = StyleSheet.create({
+        surface: {
+            padding: 8,
+            //height: 80,
+            //width: 280,
+            //alignItems: 'center',
+            //justifyContent: 'center',
+        },
+    });
 
     const hasHydrated = useStore(state => state._hasHydrated);
 
@@ -190,40 +209,64 @@ const Tab1 = () => {
                 <ScrollView style={{
                     backgroundColor: theme.colors.background
                 }}>
+                    <Surface style={surfaceStyle.surface}>
+                        <Text>Your stake (promisee stake):</Text>
+                        <TextInput
+                            inputMode="decimal"
+                            onChangeText={onChangePromiseeStake}
+                            onEndEditing={checkNumbers}
+                            value={promiseeStake}
+                        />
+                        <HelperText type="error" visible={!isIntegerNumber(promiseeStake)}>
+                            Enter a whole integer number.
+                        </HelperText>
+                    </Surface>
+
+                    <Surface style={surfaceStyle.surface}>
+                        <Text>The other, contract fullfilling,
+                            parties stake (promisor stake):</Text>
+                        <TextInput
+                            inputMode="decimal"
+                            onChangeText={onChangePromisorStake}
+                            onEndEditing={checkNumbers}
+                            value={promisorStake}
+                        />
+                        <HelperText type="error" visible={!isIntegerNumber(promisorStake)}>
+                            Enter a whole integer number.
+                        </HelperText>
+                    </Surface>
+
+                    <Surface style={surfaceStyle.surface}>
+                        <Text>The other, contract fullfilling,
+                            parties payout (promisor payout):</Text>
+                        <TextInput
+                            inputMode="decimal"
+                            onChangeText={onChangePromisorPayout}
+                            onEndEditing={checkNumbers}
+                            value={promisorPayout}
+                        />
+                        <HelperText type="error" visible={!isIntegerNumber(promisorPayout)}>
+                            Enter a whole integer number.
+                        </HelperText>
+                    </Surface>
+
+                    <Surface style={surfaceStyle.surface}>
+                        <Text>The maximum arbiter payout (arbiter max payout):</Text>
+                        <TextInput
+                            inputMode="decimal"
+                            onChangeText={onChangeArbiterPayout}
+                            onEndEditing={checkNumbers}
+                            value={arbiterPayout}
+                        />
+                        <HelperText type="error" visible={!isIntegerNumber(arbiterPayout)}>
+                            Enter a whole integer number.
+                        </HelperText>
+                    </Surface>
+
                     <Text>Edit your promise text:</Text>
                     <TextInput
                         onChangeText={onChangeContractText}
                         value={contractText}
-                    />
-                    <Text>Your stake (promisee stake):</Text>
-                    <TextInput
-                        inputMode="decimal"
-                        onChangeText={onChangePromiseeStake}
-                        onEndEditing={checkNumber}
-                        value={promiseeStake}
-                    />
-                    <Text>The other, contract fullfilling,
-                        parties stake (promisor stake):</Text>
-                    <TextInput
-                        inputMode="decimal"
-                        onChangeText={onChangePromisorStake}
-                        onEndEditing={checkNumber}
-                        value={promisorStake}
-                    />
-                    <Text>The other, contract fullfilling,
-                        parties payout (promisor payout):</Text>
-                    <TextInput
-                        inputMode="decimal"
-                        onChangeText={onChangePromisorPayout}
-                        onEndEditing={checkNumber}
-                        value={promisorPayout}
-                    />
-                    <Text>The maximum arbiter payout (arbiter max payout):</Text>
-                    <TextInput
-                        inputMode="decimal"
-                        onChangeText={onChangeArbiterPayout}
-                        onEndEditing={checkNumber}
-                        value={arbiterPayout}
                     />
                     <Button
                         icon="note-check-outline"
