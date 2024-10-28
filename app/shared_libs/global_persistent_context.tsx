@@ -2,6 +2,7 @@ import { create, StateCreator } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
+import { envSetup } from './environment_setup';
 
 
 
@@ -110,6 +111,7 @@ const createHydratedSlice: StateCreator<
         set({
             _hasHydrated: true
         });
+        envSetup();
     },
 })
 
@@ -162,3 +164,5 @@ export const useStore = create<StoreType>()(
         }
     ),
 )
+
+
