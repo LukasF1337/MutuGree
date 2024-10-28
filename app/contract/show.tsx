@@ -17,7 +17,6 @@ import { theme } from '../shared_libs/utils'
 import { contractData, useStore } from '../shared_libs/global_persistent_context';
 
 const Tab1 = () => {
-    const router = useRouter();
     const hasHydrated = useStore(state => state._hasHydrated);
     const contractStore = useStore(state => state.contractData) ?? "Error: no contract to show" // default ""
 
