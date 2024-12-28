@@ -10,8 +10,8 @@ import {
     ContractFactory, Provider, Wallet, types, utils
 } from "zksync-ethers";
 //import crypto from "react-native-quick-crypto";
-import { theme } from '../shared_libs/utils'
-import { contractData, useStore } from "../shared_libs/global_persistent_context"
+import { theme } from '../shared_libs/colors'
+import { contractData, useStore } from "../shared_libs/environment"
 import { List, Text, PaperProvider } from 'react-native-paper';
 
 
