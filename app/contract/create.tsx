@@ -12,9 +12,9 @@ import {
 //import crypto from "react-native-quick-crypto";
 import smartContractsJson from '../../Vyper/manualContractCompiler/contracts-compiled/combined.json';
 import LZString from "lz-string";
-import { contractData, useStore } from '../shared_libs/global_persistent_context';
+import { contractData, useStore, getProvider } from '../shared_libs/environment';
 import { Surface, Text, HelperText, TextInput, ActivityIndicator, PaperProvider, Button } from 'react-native-paper';
-import { theme } from '../shared_libs/utils'
+import { theme } from '../shared_libs/colors'
 
 const Tab1 = () => {
 
@@ -33,8 +33,6 @@ const Tab1 = () => {
         promisorPayout: 0,
         arbiterPayout: 0,
     }
-    const providerStore = useStore(state => state.providerString)
-    const setProviderStore = useStore(state => state.providerStringSet)
 
     const contractList = useStore(state => state.contractList)
     const contractListAdd = useStore(state => state.contractListAdd)
@@ -56,31 +54,6 @@ const Tab1 = () => {
         }
         return +value == Math.floor(+value)
     };
-
-    async function getProvider(): Promise<Provider> {
-        if (providerStore == undefined || providerStore == null) {
-            var providerStr: string;
-            if (Platform.OS === 'android') {
-                // 10.0.2.2 is alias for localhost of machine hosting the android VM
-                // zkSync node RPC resides on port 8011
-                providerStr = "http://10.0.2.2:8011"
-            } else if (Platform.OS === 'web') {
-                // localhost
-                providerStr = "http://127.0.0.1:8011"
-            } else {
-                throw new Error(`${Platform.OS} not supported.`);
-            }
-            //storeData("provider", providerStr)
-            setProviderStore(providerStr)
-            console.log("created Provider: " + providerStr)
-            return new Provider(providerStr)
-            // TODO FIXME what happens if loaded again, is variable
-            // providerStore properly updated?
-        } else {
-            console.log("loaded Provider: " + providerStore)
-            return new Provider(providerStore)
-        }
-    }
 
     async function deployContract(
         richWallet: Wallet,
@@ -270,6 +243,7 @@ const Tab1 = () => {
                     />
                     <Button
                         icon="note-check-outline"
+                        loading={true}
                         onPress={handlePress}
                     >
                         deploy contract
@@ -283,12 +257,12 @@ const Tab1 = () => {
 
                         </Pressable>
                     </Link>*/}
-                    <ActivityIndicator
+                    {/* <ActivityIndicator
                         animating={true}
                         hidesWhenStopped={true}
-                    />
+                    /> */}
                 </ScrollView >
-            </PaperProvider>
+            </PaperProvider >
         );
     }
 };
