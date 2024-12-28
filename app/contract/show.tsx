@@ -13,8 +13,8 @@ import {
 import simpleContractJson from '../../Vyper/contractCompiler/artifacts-zk/contracts/contractSimple.vy/contractSimple.json';
 import LZString from "lz-string";
 import { Text, Button, PaperProvider } from 'react-native-paper';
-import { theme } from '../shared_libs/utils'
-import { contractData, useStore } from '../shared_libs/global_persistent_context';
+import { theme } from '../shared_libs/colors'
+import { contractData, useStore } from '../shared_libs/environment';
 
 const Tab1 = () => {
     const hasHydrated = useStore(state => state._hasHydrated);
