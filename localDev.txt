@@ -19,4 +19,4 @@ Diagnose expo issues
 $ npx expo-doctor
 Fix expo dependencies and versions
 $ npx expo install --check
-$ npx expo prebuild
+$ npx expo prebuild --clean
