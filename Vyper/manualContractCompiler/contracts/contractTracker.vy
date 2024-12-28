@@ -1,4 +1,5 @@
 # @version >0.3.0 <0.4.0
+# THIS VYPER FILE IS OBSOLETE!
 
 event newEntry:
   owner: indexed(address)

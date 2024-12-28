@@ -1,6 +1,8 @@
 # @version >0.3.0 <0.4.0
 # vulnerabilities in the Vyper versions 0.2.15, 0.2.16, and 0.3.0
 
+# THIS VYPER FILE IS OBSOLETE!
+
 # This is the main smart contract implementing promises.
 # The interacting parties are the promisee, the promisor
 # and the arbiter. The promisee owns the smart contract.
