@@ -2,9 +2,16 @@ import { create, StateCreator } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
-import { envSetup } from './environment_setup';
 
+export type contractTracker = {
+    contractTrackerAdress: string;
+    contractTrackerVersion: number;
+}
 
+export interface ContractTrackerSlice {
+    contractTracker: contractTracker | null;
+    contractTrackerSet: (trackerAdress: contractTracker) => void;
+}
 
 export interface ProviderSlice {
     providerString: string | null;
@@ -41,7 +48,19 @@ export interface HydratedSlice {
     hydrate: () => void;
 }
 
-type StoreType = ProviderSlice & ContractSlice & ContractListSlice & HydratedSlice;
+type StoreType = ContractTrackerSlice & ProviderSlice & ContractSlice & ContractListSlice & HydratedSlice;
+
+const createContractTrackerSlice: StateCreator<
+    StoreType,
+    [["zustand/persist", unknown]],
+    [],
+    ContractTrackerSlice
+> = (set, get) => ({
+    contractTracker: null, // initial is null
+    contractTrackerSet: async (tracker: contractTracker) => {
+        set(() => ({ contractTracker: tracker }));
+    },
+})
 
 const createProviderSlice: StateCreator<
     StoreType,
@@ -111,13 +130,13 @@ const createHydratedSlice: StateCreator<
         set({
             _hasHydrated: true
         });
-        envSetup();
     },
 })
 
 export const useStore = create<StoreType>()(
     persist<StoreType>(
         (...a) => ({ // ""...a" means: just pass on every parameter
+            ...createContractTrackerSlice(...a),
             ...createProviderSlice(...a),
             ...createContractSlice(...a),
             ...createContractListSlice(...a),
