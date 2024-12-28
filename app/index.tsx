@@ -4,9 +4,9 @@ import {
   Pressable,
 } from 'react-native';
 import { Link, Stack, useRouter } from 'expo-router';
-import { useStore } from './shared_libs/global_persistent_context';
+import { useStore } from './shared_libs/environment';
 import { Button, TextInput, Text, PaperProvider } from 'react-native-paper';
-import { theme } from './shared_libs/utils'
+import { theme } from './shared_libs/colors'
 
 const App = () => {
 
@@ -32,6 +32,11 @@ const App = () => {
         <Link href="/contract/list" asChild>
           <Button icon="clipboard-list-outline">
             show contract list
+          </Button>
+        </Link>
+        <Link href="/philosophy" asChild>
+          <Button icon="book-education-outline">
+            app philosophy and usage
           </Button>
         </Link>
       </ScrollView>
